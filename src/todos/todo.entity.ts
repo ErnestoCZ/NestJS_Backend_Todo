@@ -16,7 +16,7 @@ export class Todo {
   // @Column()
   // priority: number;
 
-  // @IsOptional()
-  // @ManyToOne(() => User, (user) => user.todos)
-  // user: User;
+  @IsOptional()
+  @ManyToOne(() => User, (user) => user.todos)
+  user: User;
 }

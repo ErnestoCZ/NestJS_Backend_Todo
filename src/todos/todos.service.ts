@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './todo.entity';
 import { Repository, UpdateResult } from 'typeorm';
-import { GeneratedMetadataArgs } from 'typeorm/metadata-args/GeneratedMetadataArgs';
 
 @Injectable()
 export class TodosService {
