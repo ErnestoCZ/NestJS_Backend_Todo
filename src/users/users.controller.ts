@@ -15,8 +15,16 @@ export class UsersController {
   }
 
   @Post('/signin')
-  loginUser(@Body() body: CreateUserDto, @Session() session: any) {
+  loginUser(
+    @Body() body: CreateUserDto,
+    @Session() session: Record<string, any>,
+  ) {
     return this.authService.signin(body.email, body.password, session);
+  }
+
+  @Post('/signout')
+  signoutUser(@Session() session: Record<string, any>) {
+    return this.authService.signout(session);
   }
   @Get('/:id')
   findUser(@Param('id') id: string) {

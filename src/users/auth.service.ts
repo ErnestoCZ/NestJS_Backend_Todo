@@ -6,6 +6,7 @@ import {
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
     return await this.userService.create(email, hash);
   }
 
-  async signin(email: string, password: string, session: any) {
+  async signin(email: string, password: string, session: Record<string, any>) {
     const foundUser: User[] = await this.userService.find(email);
     if (foundUser.length === 0) {
       throw new NotFoundException('Email/User not found');
@@ -35,16 +36,20 @@ export class AuthService {
     const accessEnabled = bcrypt.compareSync(password, foundUser[0].password);
 
     if (accessEnabled) {
-      session.id = foundUser[0].id;
-      session.email = foundUser[0].email;
+      const token = jwt.sign({ id: foundUser[0].id }, 'Secret', {
+        expiresIn: '1h',
+      });
+
+      if (token) {
+        session.JWT = token;
+      }
       return foundUser[0];
     } else {
       throw new BadRequestException('Wrong password!');
     }
   }
 
-  signout(session: any) {
-    session.id = null;
-    session.email = null;
+  signout(session: Record<string, any>) {
+    session.JWT = '';
   }
 }
