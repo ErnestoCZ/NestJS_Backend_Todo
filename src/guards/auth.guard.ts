@@ -7,9 +7,7 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    if (request.session.JWT) {
-      const decoded = jwt.verify(request.session.JWT, 'Secret');
-      console.log(`${decoded}`);
+    if (request.session.JWT && jwt.verify(request.session.JWT, 'Secret')) {
       return true;
     } else {
       return false;

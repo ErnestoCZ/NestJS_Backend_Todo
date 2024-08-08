@@ -14,7 +14,6 @@ export class AuthService {
 
   async signup(email: string, password: string) {
     //check email already in use?
-    //TODO BUGFIX cannot read properties of undefined (reading "find")
     const result: User[] = await this.userService.find(email);
     if (result.length > 0) {
       throw new BadRequestException('Email already in use');
@@ -32,7 +31,6 @@ export class AuthService {
       throw new NotFoundException('Email/User not found');
     }
 
-    console.log(foundUser);
     const accessEnabled = bcrypt.compareSync(password, foundUser[0].password);
 
     if (accessEnabled) {

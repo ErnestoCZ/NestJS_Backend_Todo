@@ -1,11 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Todo } from './todo.entity';
-import { Repository, UpdateResult } from 'typeorm';
-
+import { Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
+import * as jwt from 'jsonwebtoken';
+import { JWTObject, validateJWT } from 'src/models/JWTValidation';
 @Injectable()
 export class TodosService {
-  constructor(@InjectRepository(Todo) private repo: Repository<Todo>) {}
+  constructor(
+    @InjectRepository(Todo) private repo: Repository<Todo>,
+    private userService: UsersService,
+  ) {}
 
   findAllTodosByUserId() {}
 
@@ -30,14 +39,29 @@ export class TodosService {
       return new NotFoundException('no todos found');
     }
   }
-  async createTodo(title, description) {
-    const newTodo: Partial<Todo> = this.repo.create({ title, description });
+  async createTodoByUserId(title, description, session: Record<string, any>) {
+    const decodedJWTPayload = jwt.verify(session.JWT, 'Secret', {
+      complete: true,
+    });
 
-    if (newTodo) {
+    const validatedJWT: JWTObject = validateJWT(decodedJWTPayload);
+
+    console.log(`${validatedJWT.id}`);
+    const foundUser = await this.userService.findOne(validatedJWT.id);
+
+    if (foundUser) {
+      const newTodo: Partial<Todo> = this.repo.create({
+        title,
+        description,
+        user: foundUser,
+      });
       const result = await this.repo.save(newTodo);
       return result;
+    } else {
+      throw new BadRequestException('');
     }
   }
+
   async deleteTodoById(id: string) {
     const foundTodo: Todo = await this.findTodoById(id);
 

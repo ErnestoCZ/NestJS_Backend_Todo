@@ -28,7 +28,7 @@ export class UsersController {
   }
   @Get('/:id')
   findUser(@Param('id') id: string) {
-    return this.userService.findOne(parseInt(id));
+    return this.userService.findOne(id);
   }
   @Get()
   findByEmail(@Param('email') email: string) {

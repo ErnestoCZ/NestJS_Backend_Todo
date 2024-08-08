@@ -3,7 +3,7 @@ import { Todo } from 'src/todos/todo.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
   @Column()
   email: string;
   @Column()

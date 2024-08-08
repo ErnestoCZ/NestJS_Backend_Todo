@@ -6,6 +6,7 @@ import {
   Body,
   Param,
   UseGuards,
+  Session,
 } from '@nestjs/common';
 import { CreateTodoDto } from './dtos/createTodo.dto';
 import { TodosService } from './todos.service';
@@ -31,7 +32,14 @@ export class TodosController {
   }
 
   @Post('/create')
-  createTodo(@Body() body: CreateTodoDto) {
-    return this.todoService.createTodo(body.title, body.description);
+  createTodo(
+    @Body() body: CreateTodoDto,
+    @Session() session: Record<string, any>,
+  ) {
+    return this.todoService.createTodoByUserId(
+      body.title,
+      body.description,
+      session,
+    );
   }
 }
