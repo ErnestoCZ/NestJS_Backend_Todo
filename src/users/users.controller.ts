@@ -1,8 +1,18 @@
-import { Body, Controller, Param, Post, Get, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Get,
+  Session,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
+import { UsersInterceptor } from './interceptors/users.interceptor';
 
+@UseInterceptors(new UsersInterceptor())
 @Controller('users')
 export class UsersController {
   constructor(

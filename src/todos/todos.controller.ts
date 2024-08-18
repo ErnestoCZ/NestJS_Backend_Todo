@@ -12,7 +12,7 @@ import { CreateTodoDto } from './dtos/createTodo.dto';
 import { TodosService } from './todos.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 
-@UseGuards(new AuthGuard())
+// @UseGuards(new AuthGuard()od)
 @Controller('todos')
 export class TodosController {
   constructor(private todoService: TodosService) {}
