@@ -2,11 +2,13 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Response,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { JWTObject, validateJWT } from 'src/models/JWTValidation';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +49,17 @@ export class AuthService {
     }
   }
 
-  signout(session: Record<string, any>) {
-    session.JWT = '';
+  async signout(session: Record<string, any>) {
+    if (session.JWT) {
+      const JWTData: jwt.Jwt | null = jwt.decode(session.JWT, {
+        complete: true,
+      });
+      const JWTPayload: JWTObject = validateJWT(JWTData);
+      const user: User = await this.userService.findOne(JWTPayload.id);
+      session.JWT = null;
+      return user;
+    }
+    // const userToLogout = await this.userService.findOne();
+    session.JWT = null;
   }
 }
