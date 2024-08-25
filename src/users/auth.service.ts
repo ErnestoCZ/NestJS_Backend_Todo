@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  Response,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';

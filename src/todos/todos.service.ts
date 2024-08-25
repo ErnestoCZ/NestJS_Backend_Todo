@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import * as jwt from 'jsonwebtoken';
 import { JWTObject, validateJWT } from 'src/models/JWTValidation';
+import { User } from '../users/user.entity';
 @Injectable()
 export class TodosService {
   constructor(
@@ -16,7 +17,18 @@ export class TodosService {
     private userService: UsersService,
   ) {}
 
-  findAllTodosByUserId() {}
+  async findAllTodosByUserId(userId: string) {
+    const foundUser: User = await this.userService.findOne(userId);
+
+    if (foundUser) {
+      const foundTodosByUserId: Todo[] = await this.repo.find({
+        where: { user: foundUser },
+      });
+      return foundTodosByUserId;
+    } else {
+      throw new NotFoundException('Invalid User');
+    }
+  }
 
   removeTodo() {}
 
@@ -24,7 +36,6 @@ export class TodosService {
     console.log(Number(id));
     const foundTodo: Todo = await this.repo.findOne({ where: { id: id } });
     if (foundTodo) {
-      console.log(foundTodo);
       return foundTodo;
     } else {
       throw new NotFoundException(id);

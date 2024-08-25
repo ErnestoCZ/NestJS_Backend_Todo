@@ -5,14 +5,13 @@ import {
   Post,
   Body,
   Param,
-  UseGuards,
   Session,
 } from '@nestjs/common';
 import { CreateTodoDto } from './dtos/createTodo.dto';
 import { TodosService } from './todos.service';
-import { AuthGuard } from 'src/guards/auth.guard';
 
-@UseGuards(new AuthGuard())
+//TODO insert a JWT in frontend before add Guard
+// @UseGuards(new AuthGuard())
 @Controller('todos')
 export class TodosController {
   constructor(private todoService: TodosService) {}
@@ -41,5 +40,10 @@ export class TodosController {
       body.description,
       session,
     );
+  }
+
+  @Get('/user/:userid')
+  getTodosByUserId(@Param('userid') userId: string) {
+    return this.todoService.findAllTodosByUserId(userId);
   }
 }
