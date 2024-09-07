@@ -6,16 +6,16 @@ import {
   Body,
   Param,
   UseInterceptors,
-  Session,
+  Headers,
 } from '@nestjs/common';
 import { CreateTodoDto } from './dtos/createTodo.dto';
 import { TodosService } from './todos.service';
 import { TodoInterceptor } from './interceptors/todo.interceptor';
-// import { AuthGuard } from '../guards/auth.guard';
-// import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../guards/auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 //TODO insert a JWT in frontend before add Guard
-// @UseGuards(new AuthGuard())
+@UseGuards(new AuthGuard())
 @UseInterceptors(new TodoInterceptor())
 @Controller('todos')
 export class TodosController {
@@ -33,9 +33,9 @@ export class TodosController {
   @Delete('/:id')
   deleteTodo(
     @Param('id') todoUUID: string,
-    @Session() session: Record<string, any>,
+    @Headers('authorization') auth: string,
   ) {
-    return this.todoService.deleteTodoById(todoUUID, session);
+    return this.todoService.deleteTodoById(todoUUID, auth);
   }
 
   // @Post('/create')

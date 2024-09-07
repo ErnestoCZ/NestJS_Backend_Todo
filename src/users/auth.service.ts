@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -29,7 +29,7 @@ export class AuthService {
   async signin(email: string, password: string, session: Record<string, any>) {
     const foundUser: User[] = await this.userService.find(email);
     if (foundUser.length === 0) {
-      throw new NotFoundException('Email/User not found');
+      throw new UnauthorizedException('Email/User not found');
     }
 
     const accessEnabled = bcrypt.compareSync(password, foundUser[0].password);
@@ -42,7 +42,7 @@ export class AuthService {
       if (token) {
         session.JWT = token;
       }
-      return foundUser[0];
+      return JSON.stringify({ JWT: token });
     } else {
       throw new BadRequestException('Wrong password!');
     }

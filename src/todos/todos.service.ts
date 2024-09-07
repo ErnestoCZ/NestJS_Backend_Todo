@@ -106,34 +106,25 @@ export class TodosService {
     }
   }
 
-  async deleteTodoById(todoId: string, session: Record<string, any>) {
-    const decodedJWTPayload: jwt.Jwt | string = jwt.verify(
-      session.JWT,
-      this.JWTSecret,
-      { complete: true },
-    );
+  async deleteTodoById(todoId: string, auth: string) {
+    const token = jwt.verify(auth.split(' ')[1], this.JWTSecret, {
+      complete: true,
+    });
+    const validatedToken = validateJWT(token);
+    const foundUser = await this.userService.findOne(validatedToken.id);
 
-    const validatedJWT: JWTObject = validateJWT(decodedJWTPayload);
-
-    // const { '0': foundTodo, '1': foundUser }: [Todo, User] = await Promise.all<
-    //   [Promise<Todo>, Promise<User>]
-    // >([todoRequest, userRequest]);
-
-    const [foundUser, foundTodo] = await Promise.all([
-      this.userService.findOne(validatedJWT.id),
-      this.findTodoById(todoId),
-    ]);
-
-    if (foundTodo.user.id !== validatedJWT.id) {
-      throw new Error('You are not allowed to delete this todo');
-    }
-
-    if (foundTodo && foundUser) {
-      console.log(foundTodo, foundUser);
-      console.log('user and todo matches!');
-      // return await this.repo.remove(foundTodo);
+    if (foundUser) {
+      const foundTodo = await this.repo.find({
+        where: { id: todoId, user: foundUser },
+      });
+      if (foundTodo.length === 1) {
+        const result = await this.repo.delete(foundTodo[0]);
+        return result;
+      } else {
+        throw new Error('Todo not found!');
+      }
     } else {
-      throw new NotFoundException();
+      throw new Error('Not allowed to delete this todo');
     }
   }
 }

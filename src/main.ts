@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
-import { LoggingInterceptor } from './interceptors/logging.interceptor';
+// import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -20,7 +20,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  app.useGlobalInterceptors(new LoggingInterceptor());
+  // app.useGlobalInterceptors(new LoggingInterceptor());
   app.use(cookieParser());
   await app.listen(3000);
 }
