@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
 import { TodosModule } from './todos/todos.module';
 import { Todo } from './todos/todo.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -20,6 +21,9 @@ import { Todo } from './todos/todo.entity';
       entities: [User, Todo],
       synchronize: true,
       retryDelay: 5000,
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
     UsersModule,
     TodosModule,

@@ -10,7 +10,9 @@ import { Observable } from 'rxjs';
 export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
-    console.log(request);
+    console.log('Request', request);
+    // const response = context.switchToHttp().getResponse();
+    // console.log(response);
     return next.handle();
   }
 }
