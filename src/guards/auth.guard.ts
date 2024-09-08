@@ -11,11 +11,9 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const ctx: string[] = request.headers['authorization'].split(' ');
-    console.log(ctx[1], 'Guard');
-    if (ctx[0] !== 'Bearer')
-      // throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    if (ctx.length !== 2 || ctx[0] !== 'Bearer') {
       return false;
-    else {
+    } else {
       const JWTPayload: jwt.JwtPayload | string = jwt.verify(ctx[1], 'Secret', {
         complete: false,
       });
