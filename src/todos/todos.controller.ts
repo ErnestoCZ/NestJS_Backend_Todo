@@ -14,7 +14,6 @@ import { TodoInterceptor } from './interceptors/todo.interceptor';
 import { AuthGuard } from '../guards/auth.guard';
 import { UseGuards } from '@nestjs/common';
 
-//TODO insert a JWT in frontend before add Guard
 @UseGuards(new AuthGuard())
 @UseInterceptors(new TodoInterceptor())
 @Controller('todos')

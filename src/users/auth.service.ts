@@ -58,7 +58,6 @@ export class AuthService {
       session.JWT = null;
       return user;
     }
-    // const userToLogout = await this.userService.findOne();
     session.JWT = null;
   }
 }
