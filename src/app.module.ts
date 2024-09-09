@@ -30,6 +30,26 @@ import { DataSource } from 'typeorm';
         return dataSource;
       },
     }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      name: 'DB2',
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        database: configService.get<string>('DB_DATABASE'),
+        host: configService.get<string>('DB_HOST', 'localhost'),
+        port: 5433,
+        username: configService.get<string>('DB_USER', 'root'),
+        password: configService.get<string>('DB_PASSWORD', '1234'),
+        autoLoadEntities: true,
+        synchronize: true,
+        retryDelay: 5000,
+      }),
+      dataSourceFactory: async (options) => {
+        const dataSource = await new DataSource(options).initialize();
+        return dataSource;
+      },
+    }),
 
     ConfigModule.forRoot({
       isGlobal: true,
