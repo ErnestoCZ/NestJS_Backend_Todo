@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,9 +18,9 @@ import { CreateTodoDto } from './dtos/createTodo.dto';
 export class TodosService {
   private JWTSecret: string;
   constructor(
-    @InjectRepository(Todo) private repo: Repository<Todo>,
+    @InjectRepository(Todo, 'DB') private repo: Repository<Todo>,
+    @Inject(ConfigService) private configService: ConfigService,
     private userService: UsersService,
-    private configService: ConfigService,
   ) {
     this.JWTSecret = this.configService.get<string>('JWT_SECRET');
   }

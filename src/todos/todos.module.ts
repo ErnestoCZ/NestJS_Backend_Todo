@@ -8,7 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 @Module({
   providers: [TodosService],
   exports: [TodosService],
-  imports: [TypeOrmModule.forFeature([Todo]), UsersModule],
+  imports: [TypeOrmModule.forFeature([Todo], 'DB'), UsersModule],
   controllers: [TodosController],
 })
 export class TodosModule {}

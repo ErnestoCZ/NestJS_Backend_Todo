@@ -4,24 +4,33 @@ import { AppService } from './app.service';
 import { UsersController } from './users/users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { User } from './users/user.entity';
 import { TodosModule } from './todos/todos.module';
-import { Todo } from './todos/todo.entity';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      database: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'root',
-      password: '1234',
-      entities: [User, Todo],
-      synchronize: true,
-      retryDelay: 5000,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      name: 'DB',
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        database: configService.get<string>('DB_DATABASE'),
+        host: configService.get<string>('DB_HOST', 'localhost'),
+        port: configService.get<number>('DB_PORT', 5432),
+        username: configService.get<string>('DB_USER', 'root'),
+        password: configService.get<string>('DB_PASSWORD', '1234'),
+        autoLoadEntities: true,
+        synchronize: true,
+        retryDelay: 5000,
+      }),
+      dataSourceFactory: async (options) => {
+        const dataSource = await new DataSource(options).initialize();
+        return dataSource;
+      },
     }),
+
     ConfigModule.forRoot({
       isGlobal: true,
     }),
